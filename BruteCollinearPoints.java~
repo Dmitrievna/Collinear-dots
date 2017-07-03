@@ -1,0 +1,150 @@
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.*;
+import java.util.Arrays;
+
+public class BruteCollinearPoints {
+    
+    private int numberOfSegments;// number of line segments
+    private LineSegment[] segments;// list of line segments 
+    
+    public BruteCollinearPoints(Point[] points) {
+        
+        this.numberOfSegments = new Integer(0);
+        this.segments = new LineSegment[points.length];   
+        double currentSlope = -1488;
+        int numberOfPoints = 0;
+        Point pmin = new Point(-1, -1);
+        Point pmax = new Point(-1, -1);
+        
+        
+        for (int i = 0; i < points.length; i++) {
+            
+            for (int j = i+1; j < points.length; j++) {
+                
+                if (currentSlope == -1488) {
+                    
+                    //StdOut.println(" case 1: ");
+                    pmin = points[i];
+                    pmax = points[i];
+                    currentSlope = points[i].slopeTo(points[j]);
+                    numberOfPoints +=2;
+                    //printEverything(i, j, points, currentSlope, pmax, pmin);             
+                
+                } else {
+                
+                    if (points[i].slopeTo(points[j]) == currentSlope) {
+                    
+                        //StdOut.println(" case 2: ");
+                        if (points[j].compareTo(pmin) == -1) {
+                            pmin = points[j];
+                            numberOfPoints++;
+                        }
+                            
+                        if (points[j].compareTo(pmax) == 1) {
+                            pmax = points[j];
+                            numberOfPoints++;
+                        }
+                        
+                        //printEverything(i, j, points, currentSlope, pmax, pmin);
+                        
+                    }
+                    
+                   // StdOut.println(" case 3: ");
+                    //printEverything(i, j, points, currentSlope, pmax, pmin);
+                    if (j == points.length -1) {
+                        
+                        if (numberOfPoints >= 4) {
+                            
+                            this.segments[this.numberOfSegments++] = new LineSegment(pmin,pmax);
+                            StdOut.print(" pmin = ");
+                            StdOut.println(pmin);
+                            StdOut.print(" pmax = ");
+                            StdOut.println(pmax);
+                        }
+                        
+                        currentSlope = -1488;
+                        numberOfPoints = 0;
+                    }
+                }
+            
+            }
+                      
+        }
+        
+        
+
+    }
+    
+    public void printEverything(int i, int j, Point[] points, double slope, Point pmax, Point pmin) {
+        
+        //StdOut.print("i = ");
+        //StdOut.print(i);
+        //StdOut.print(" j = ");
+        //StdOut.print(j);
+        //StdOut.print(" points[i] = ");
+        //StdOut.print(points[i]);
+        //StdOut.print(" points[j] = ");
+        //StdOut.print(points[j]);
+        StdOut.print(" slope = ");
+        StdOut.print(points[i].slopeTo(points[j]));
+        StdOut.print(" pmax = ");
+        StdOut.print(pmax);
+        StdOut.print(" pmin = ");
+        StdOut.print(pmin);
+        StdOut.print(" currentSlope = ");
+        StdOut.println(slope);
+    
+    
+    }
+    
+    /**
+     * @return number of line segments
+     */ 
+    public int numberOfSegments() {
+        
+        return this.numberOfSegments;
+    }
+    
+    /**
+     * @return list of segments
+     */
+    public LineSegment[] segments() {
+        
+        return this.segments;
+    }
+    
+    public static void main(String[] args) {
+
+    // read the n points from a file
+    In in = new In(args[0]);
+    int n = in.readInt();
+    Point[] points = new Point[n];
+    for (int i = 0; i < n; i++) {
+        int x = in.readInt();
+        int y = in.readInt();
+        points[i] = new Point(x, y);
+    }
+    
+ 
+    // draw the points
+    StdDraw.enableDoubleBuffering();
+    StdDraw.setXscale(0, 32768);
+    StdDraw.setYscale(0, 32768);
+    StdDraw.setPenColor(StdDraw.BLUE);
+    for (Point p : points) {
+        p.draw();
+    }
+    StdDraw.show();
+
+    // print and draw the line segments
+    BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+    for (LineSegment segment : collinear.segments()) {
+        if (segment != null) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+    }
+    StdDraw.show();
+}
+
+}
